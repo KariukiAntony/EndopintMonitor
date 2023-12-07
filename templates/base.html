@@ -10,8 +10,23 @@
       {% endblock %}
     </title>
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
   </head>
   <body>
+    <!-- <p id="time"></p>
+    <py-script>
+    import asyncio
+    from datetime import datetime
+
+    async def main():
+        for i in range(10):
+          status_code_element = document.getElementById("time")
+          status_code_element.innerHTML = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+          await asyncio.sleep(1)   
+                             
+    await main()
+  </py-script> -->
     {% include "navbar.html" %}
     {% block content %}{% endblock %}
     <script type="text/javascript" src="/node_modules/flowbite/dist/flowbite.js"></script>

@@ -3,3 +3,5 @@ env
 node_modules
 tailwind.config.js
 .idea
+test.py
+main.py

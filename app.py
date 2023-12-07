@@ -4,19 +4,20 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from os import path
 
+DB_NAME = "websites.db"
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///websites.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # initialize db
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # create db
-
-
 class Websites(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -26,6 +27,19 @@ class Websites(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+""" function to create
+database tables if they dont
+exist
+"""
+def create_db_tables(app, DB_NAME):
+    if not path.exists(f"/WebMon/{DB_NAME}"):
+        with app.app_context():
+            db.create_all()
+            print(f"{DB_NAME} created successfully..")
+
+    pass
+
+create_db_tables(app, DB_NAME)
 codes = []
 
 
@@ -76,3 +90,4 @@ if __name__ == '__main__':
     # db.init_app(app)
 
     app.run(debug=True)
+
