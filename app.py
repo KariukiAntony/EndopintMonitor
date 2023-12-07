@@ -80,7 +80,7 @@ def index():
         except:
             return "Error adding website"
     else:
-        websites = Websites.query.order_by(Websites.date_created)
+        websites = Websites.query.order_by(Websites.id.desc()).all()
         return render_template('index.html', title=title, websites=websites)
 
 
