@@ -99,7 +99,23 @@ def index():
         websites = Websites.query.order_by(Websites.id.desc()).all()
         return render_template('index.html', title=title, websites=websites)
 
+"""
+delete the endpoint
+"""   
+@app.route("/webmon/delete/<int:id>")
+def delete_endpoint(id):
+    url = Websites.query.filter_by(id=id).first()
+    db.session.delete(url)
+    db.session.commit()
+    websites = Websites.query.order_by(Websites.id.desc()).all()
+    return render_template('index.html', title="Home", websites=websites)
 
+"""
+Endpoint to handle errors
+"""
+@app.route("/errors/<string:message>")
+def handle_errors(message):
+    return f"<h2>An error occured: {message}</h2>"
 
 if __name__ == '__main__':
     # app.config.from_object(Config())
