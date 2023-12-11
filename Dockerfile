@@ -16,4 +16,4 @@ EXPOSE 5000
 # 
 # ENV FLASK_DEBUG=True
 
-CMD [ "flask", "run", "--port", "5000", "--host", "0.0.0.0" ]
+CMD [ "python", "runserver.py", "--port", "5000", "--host", "0.0.0.0" ]
