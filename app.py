@@ -1,7 +1,7 @@
 import requests
 import asyncio
 from datetime import datetime
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from os import path
@@ -60,6 +60,17 @@ def test(url):
     contents = requests.get(url)
     return contents.status_code
 
+"""
+Ensure only links with https
+are used
+"""
+def validate_url(url):
+    prefix = list(url[0:5])
+    if "s" in prefix:
+        return True
+        
+    return False
+    
 
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
@@ -70,21 +81,24 @@ def index():
         website_url = request.form.get('url')
         monitor_interval = request.form.get('interval')
         website_status = test(website_url)
-
-        new_website = Websites(title=website_title,
+        if validate_url(website_url):
+            new_website = Websites(title=website_title,
                                url=website_url,
                                interval=monitor_interval,
                                status=website_status)
         # push to db
-        try:
-            db.session.add(new_website)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return "Error adding website"
+            try:
+                db.session.add(new_website)
+                db.session.commit()
+                return redirect('/')
+            except:
+                return "Error adding website"
+            
+        return redirect(url_for("handle_errors", message="Only live url can be used "))
     else:
         websites = Websites.query.order_by(Websites.id.desc()).all()
         return render_template('index.html', title=title, websites=websites)
+
 
 
 if __name__ == '__main__':
