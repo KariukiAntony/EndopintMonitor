@@ -51,7 +51,46 @@
           </tr>
         </thead>
         <tbody>
+          <py-script>
+            import asyncio
+            from pyodide.http import pyfetch
+        
+            async def get_status_code(url, interval, status_element):
+                website_interval_ = int(list(interval)[0])
+                interval = int(website_interval_)
+        
+                for i in range(10):
+                    try:
+                        response = await pyfetch(url, method="GET")
+                        status_code = response.status
+        
+                        # Display the status code of the response
+                        status_element.innerHTML = str(status_code)
+                        status_element.innerHTML += """ <h1 class="inline-block p-1 text-green-500">&#x2022;</h1>"""
+
+        
+                    except Exception as e:
+                        # If an exception occurs, set status to 500
+                        status_element.innerHTML = "500"
+                        status_element.innerHTML += """ <h1 class="inline-block p-1 text-red-500">&#x2022;</h1>"""
+                        console.log("An error occurred:", e)
+        
+                    # Sleep for the specified interval
+                    await asyncio.sleep(interval)
+        
+                    # Clear the status after the interval
+                    status_element.innerHTML = " "
+                    await asyncio.sleep(0.5)
+        </py-script>
+          
           {% for website in websites %}
+          <py-script>
+            async def handle_{{website.id}}():
+                status_tag = document.getElementById("status_{{website.id}}")
+                await get_status_code("{{ website.url }}", "{{ website.interval }}", status_tag)
+
+            asyncio.create_task(handle_{{website.id}}())
+          </py-script>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {{ website.title }}
@@ -59,13 +98,16 @@
               <td class="py-4 px-6">
                 {{ website.url }}
               </td>
-              <td class="py-4 px-6" >
-                {{ website.status }}
+              
+              <td id="status_{{website.id}}" class="py-4 px-6">
                 <h1 class="inline-block p-1 {% if website.status == "200" %}text-green-500{% else %}text-red-500
                 {% endif %}">&#x2022;</h1>
               </td>
               <td class="py-4 px-6">
                 {{ website.interval }}
+              </td>
+              <td class="py-4 px-6">
+                <a href="/delete/{{website.id}}"><i class="fa-solid fa-trash"></i></a>
               </td>
             </tr>
           {% endfor %}

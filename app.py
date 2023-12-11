@@ -5,12 +5,15 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from os import path
+from flask_cors import CORS
 
 DB_NAME = "websites.db"
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+CORS(app=app, resources=r"/*")
 
 
 # initialize db
