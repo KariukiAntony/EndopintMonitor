@@ -57,9 +57,9 @@
         
             async def get_status_code(url, interval, status_element):
                 website_interval_ = int(list(interval)[0])
-                interval = int(website_interval_)
+                interval = int(website_interval_) * 30
         
-                for i in range(10):
+                while True:
                     try:
                         response = await pyfetch(url, method="GET")
                         status_code = response.status
