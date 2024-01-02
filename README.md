@@ -1,3 +1,3 @@
-# WebMon
+# EndpointMonitor
 
 ![alt text](/webmon.png)
